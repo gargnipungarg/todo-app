@@ -1,6 +1,7 @@
 package org.opensource.todo.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.opensource.todo.exception.InvalidTODOTaskStatusException;
 import org.opensource.todo.exception.NoTODOTaskFoundException;
 import org.opensource.todo.model.TODOEntity;
 import org.opensource.todo.model.TodoTask;
@@ -8,10 +9,7 @@ import org.opensource.todo.service.TODOManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -28,5 +26,10 @@ public class TODOManagementController {
     @GetMapping("/todos/{taskId}")
     ResponseEntity<TODOEntity> getTaskDetails(@PathVariable Long taskId) throws NoTODOTaskFoundException {
         return new ResponseEntity<>(todoManagementService.findByTaskId(taskId), HttpStatus.OK);
+    }
+
+    @PostMapping("/todos/add")
+    ResponseEntity<String> addTodo(@RequestBody TodoTask todo) throws InvalidTODOTaskStatusException {
+        return new ResponseEntity<>(todoManagementService.addTodoItem(todo), HttpStatus.ACCEPTED);
     }
 }

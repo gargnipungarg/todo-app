@@ -1,9 +1,6 @@
 package org.opensource.todo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.opensource.todo.constants.TaskStatuses;
 
 import javax.persistence.*;
