@@ -1,1 +1,1 @@
-sh ./gradlew bootRun
+./gradlew bootRun
