@@ -36,9 +36,9 @@ public class TODOManagementService {
 
     public String addTodoItem(TodoTask todo) throws InvalidTODOTaskStatusException {
         String status = todo.getStatus();
-        String validStatus = TaskStatuses.valueOf(status).getTaskStatus();
-        if(StringUtils.isNotEmpty(validStatus)) {
-            // Add mapper here
+        try {
+            String validStatus = TaskStatuses.valueOf(status).getTaskStatus();
+            log.info("$$$$$$$$$$$$$$$"+validStatus);
             TODOEntity todoEntity = new TODOEntity();
             todoEntity.setDescription(todo.getDescription());
             todoEntity.setCreationDate(todo.getCreationDate());
@@ -46,7 +46,7 @@ public class TODOManagementService {
             todoEntity.setCompletionDate(todo.getCompletionDate());
             todoManagementRepository.save(todoEntity);
             return HttpStatus.ACCEPTED.toString();
-        } else {
+        } catch (IllegalArgumentException ex) {
             throw new InvalidTODOTaskStatusException(status);
         }
     }
