@@ -1,6 +1,7 @@
 package org.opensource.todo.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.opensource.todo.constants.TaskStatuses;
 import org.opensource.todo.exception.InvalidTODOTaskStatusException;
 import org.opensource.todo.exception.NoTODOTaskFoundException;
@@ -36,7 +37,7 @@ public class TODOManagementService {
     public String addTodoItem(TodoTask todo) throws InvalidTODOTaskStatusException {
         String status = todo.getStatus();
         String validStatus = TaskStatuses.valueOf(status).getTaskStatus();
-        if(validStatus != null) {
+        if(StringUtils.isNotEmpty(validStatus)) {
             // Add mapper here
             TODOEntity todoEntity = new TODOEntity();
             todoEntity.setDescription(todo.getDescription());
