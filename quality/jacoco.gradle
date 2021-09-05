@@ -1,0 +1,21 @@
+apply plugin: 'jacoco'
+
+jacocoTestReport {
+    reports {
+        xml.required = false
+        csv.required = false
+        html.required = true
+        html.outputLocation = file("$buildDir/reports/jacoco")
+    }
+    afterEvaluate {
+        classDirectories.from = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/constants/**',
+                    '**/controller/**',
+                    '**/handler/**',
+                    '**/mappers/**',
+                    '**/model/**',
+            ])
+        })
+    }
+}
