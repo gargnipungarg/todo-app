@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/todoservicev1")
@@ -20,6 +22,11 @@ public class TODOManagementController {
     @Autowired
     public void setTodoManagementService(TODOManagementService todoManagementService) {
         this.todoManagementService = todoManagementService;
+    }
+
+    @GetMapping("/todos/status/{status}")
+    ResponseEntity<List<TODOEntity>> getAllItemsOfStatus(@PathVariable String status) throws InvalidTODOTaskStatusException {
+        return new ResponseEntity<>(todoManagementService.findAllByStatus(status), HttpStatus.OK);
     }
 
     @GetMapping("/todos/{taskId}")
@@ -33,7 +40,7 @@ public class TODOManagementController {
     }
 
     @PostMapping("/todos/updateDesc")
-    ResponseEntity<String> updateDesc(@RequestBody TodoTask todo) throws InvalidTODORequestException, TODODescriptionInvalidException {
+    ResponseEntity<String> updateDesc(@RequestBody TodoTask todo) throws InvalidTODORequestException, TODODescriptionInvalidException, TODOPastDueException {
         return new ResponseEntity<>(todoManagementService.changeDesc(todo), HttpStatus.OK);
     }
 

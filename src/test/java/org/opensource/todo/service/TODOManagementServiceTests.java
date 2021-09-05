@@ -13,11 +13,13 @@ import org.opensource.todo.model.TodoTask;
 import org.opensource.todo.respository.TODOManagementRepository;
 import org.opensource.todo.testConsts.TestConstants;
 import org.opensource.todo.testUtils.TestUtil;
+
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TODOManagementServiceTests {
@@ -75,6 +77,14 @@ public class TODOManagementServiceTests {
         assertEquals(serviceUnderTest.changeDesc(testTODOItem), TestConstants.TEST_ITEM_UPDATED_MSG);
         Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).getById(anyLong());
         Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).save(any());
+    }
+
+    @Test
+    void testChangeDescPastItem() throws Exception {
+        TodoTask testTODOItem = TestUtil.getTestTODOPastItem();
+        testTODOItem.setDescription(TestConstants.TEST_NEW_DESC);
+        Mockito.when(mockRepository.getById(any())).thenReturn(TestUtil.getTestPastTODOEntity());
+        assertThrows(TODOPastDueException.class, () -> serviceUnderTest.changeDesc(testTODOItem));
     }
 
     @Test
@@ -144,34 +154,20 @@ public class TODOManagementServiceTests {
         Mockito.verify(mockRepository, Mockito.times(TestConstants.ZERO_INT)).getById(anyLong());
     }
 
-
-
-/*
-
-   public String changeStatus(TodoTask todoTask) throws InvalidTODORequestException, InvalidTODOTaskStatusException, TODOPastDueException {
-        try {
-            log.info("Todo task: "+todoTask);
-            Long todoId = Long.valueOf(todoTask.getId());
-            log.info("Querying for TODO id: "+todoId);
-            if(todoId == 0) {
-                throw new InvalidTODORequestException(AppConstants.ID_REQUIRED_MSG);
-            }
-            TODOEntity item = todoManagementRepository.getById(todoId);
-            if(AppUtils.isDue(item.getStatus())){
-                throw new TODOPastDueException(AppConstants.PAST_DUE_MSG);
-            }
-            String status = todoTask.getStatus();
-            String validStatus = TaskStatuses.valueOf(status.toUpperCase().replace(AppConstants.SPACE, AppConstants.UNDERSCORE)).getTaskStatus();
-            log.info("Valid status found, persisting item with status : "+validStatus);
-            item.setStatus(status);
-            log.info("Status updated, persisting item.");
-            todoManagementRepository.save(item);
-            return AppConstants.ITEM_UPDATED_MSG + todoId;
-        } catch(NumberFormatException ex) {
-            throw new InvalidTODORequestException(AppConstants.INVALID_ID_MSG);
-        } catch (IllegalArgumentException ex) {
-            throw new InvalidTODOTaskStatusException(todoTask.getStatus());
-        }
+    @Test
+    void testFindAllByStatus() throws InvalidTODOTaskStatusException {
+        TODOEntity item = TestUtil.getTestTODOEntity();
+        Mockito.when(mockRepository.findAll()).thenReturn(Collections.singletonList(item));
+        final List<TODOEntity> allByStatus = serviceUnderTest.findAllByStatus(TestConstants.TEST_STATUS);
+        assertEquals(1, allByStatus.size());
+        Mockito.verify(mockRepository, Mockito.times(TestConstants.ZERO_INT)).getById(anyLong());
     }
-    }*/
+
+    @Test
+    void testFindAllByStatusException() {
+        TODOEntity item = TestUtil.getTestTODOEntity();
+        Mockito.when(mockRepository.findAll()).thenReturn(Collections.singletonList(item));
+        assertThrows(InvalidTODOTaskStatusException.class, () -> serviceUnderTest.findAllByStatus(TestConstants.INVALID_STATUS));
+    }
+
 }

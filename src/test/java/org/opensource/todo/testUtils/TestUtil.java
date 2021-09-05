@@ -1,5 +1,6 @@
 package org.opensource.todo.testUtils;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.opensource.todo.mappers.TodoMapper;
 import org.opensource.todo.model.TODOEntity;
 import org.opensource.todo.model.TodoTask;
@@ -13,7 +14,18 @@ public class TestUtil {
         return TodoTask.builder()
                 .id(String.valueOf(TestConstants.ONE_INT))
                 .creationDate(new Date())
-                .dueDate(new Date())
+                .dueDate(DateUtils.addDays(new Date(),1))
+                .completionDate(new Date())
+                .description(TestConstants.TEST_DESC)
+                .status(TestConstants.TEST_STATUS)
+                .build();
+    }
+
+    public static TodoTask getTestTODOPastItem() {
+        return TodoTask.builder()
+                .id(String.valueOf(TestConstants.ONE_INT))
+                .creationDate(new Date())
+                .dueDate(DateUtils.addDays(new Date(),-1))
                 .completionDate(new Date())
                 .description(TestConstants.TEST_DESC)
                 .status(TestConstants.TEST_STATUS)
@@ -22,6 +34,11 @@ public class TestUtil {
 
     public static TODOEntity getTestTODOEntity() {
         TodoTask task = getTestTODOItem();
+        return TodoMapper.INSTANCE.sourceToDestination(task);
+    }
+
+    public static TODOEntity getTestPastTODOEntity() {
+        TodoTask task = getTestTODOPastItem();
         return TodoMapper.INSTANCE.sourceToDestination(task);
     }
 }
