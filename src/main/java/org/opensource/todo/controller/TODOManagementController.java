@@ -1,9 +1,7 @@
 package org.opensource.todo.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.opensource.todo.exception.InvalidTODOTaskStatusException;
-import org.opensource.todo.exception.NoTODOTaskFoundException;
-import org.opensource.todo.exception.TODOTaskMappingException;
+import org.opensource.todo.exception.*;
 import org.opensource.todo.model.TODOEntity;
 import org.opensource.todo.model.TodoTask;
 import org.opensource.todo.service.TODOManagementService;
@@ -32,5 +30,10 @@ public class TODOManagementController {
     @PostMapping("/todos/add")
     ResponseEntity<String> addTodo(@RequestBody TodoTask todo) throws InvalidTODOTaskStatusException, TODOTaskMappingException {
         return new ResponseEntity<>(todoManagementService.addTodoItem(todo), HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping("/todos/updateDesc")
+    ResponseEntity<String> updateDesc(@RequestBody TodoTask todo) throws InvalidTODORequestException, TODODescriptionInvalidException {
+        return new ResponseEntity<>(todoManagementService.changeDesc(todo), HttpStatus.OK);
     }
 }

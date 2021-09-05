@@ -1,11 +1,8 @@
 package org.opensource.todo.model;
 
-import lombok.*;
-import org.opensource.todo.constants.TaskStatuses;
-
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import javax.persistence.*;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
@@ -14,8 +11,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class TODOEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "description")
     private String description;

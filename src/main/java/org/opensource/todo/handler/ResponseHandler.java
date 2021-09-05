@@ -1,9 +1,7 @@
 package org.opensource.todo.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.opensource.todo.exception.InvalidTODOTaskStatusException;
-import org.opensource.todo.exception.NoTODOTaskFoundException;
-import org.opensource.todo.exception.TODOTaskMappingException;
+import org.opensource.todo.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,16 +20,16 @@ public class ResponseHandler {
     }
 
     @ResponseBody
-    @ExceptionHandler(InvalidTODOTaskStatusException.class)
+    @ExceptionHandler(TODOTaskMappingException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    String todoAddFailedHandler(InvalidTODOTaskStatusException ex) {
+    String todoMappingFailedHandler(TODOTaskMappingException ex) {
         return ex.getMessage();
     }
 
     @ResponseBody
-    @ExceptionHandler(TODOTaskMappingException.class)
+    @ExceptionHandler({InvalidTODORequestException.class, TODODescriptionInvalidException.class, InvalidTODOTaskStatusException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    String todoMappingFailedHandler(TODOTaskMappingException ex) {
+    String todoInvalidRequestHandler(Exception ex) {
         return ex.getMessage();
     }
 

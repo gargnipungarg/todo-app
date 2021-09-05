@@ -2,18 +2,14 @@ package org.opensource.todo.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.mapstruct.factory.Mappers;
 import org.opensource.todo.constants.AppConstants;
 import org.opensource.todo.constants.TaskStatuses;
-import org.opensource.todo.exception.InvalidTODOTaskStatusException;
-import org.opensource.todo.exception.NoTODOTaskFoundException;
-import org.opensource.todo.exception.TODOTaskMappingException;
+import org.opensource.todo.exception.*;
 import org.opensource.todo.mappers.TodoMapper;
 import org.opensource.todo.model.TODOEntity;
 import org.opensource.todo.model.TodoTask;
 import org.opensource.todo.respository.TODOManagementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -45,11 +41,34 @@ public class TODOManagementService {
             log.info("Valid status found, persisting item with status : "+validStatus);
             TODOEntity todoEntity = TodoMapper.INSTANCE.sourceToDestination(todo);
             todoManagementRepository.save(todoEntity);
-            return AppConstants.SUCCESS_MSG + todoEntity.getId();
+            return AppConstants.ITEM_CREATED_MSG + todoEntity.getId();
         } catch (IllegalArgumentException ex) {
             throw new InvalidTODOTaskStatusException(status);
         } catch (Exception e) {
             throw new TODOTaskMappingException(e.getMessage());
+        }
+    }
+
+    public String changeDesc(TodoTask todoTask) throws TODODescriptionInvalidException, InvalidTODORequestException {
+        try {
+            log.info("Todo task: "+todoTask);
+            Long todoId = Long.valueOf(todoTask.getId());
+            log.info("Querying for TODO id: "+todoId);
+            if(todoId == 0) {
+                throw new InvalidTODORequestException(AppConstants.ID_REQUIRED_MSG);
+            }
+            TODOEntity item = todoManagementRepository.getById(todoId);
+            String description = todoTask.getDescription();
+            if(StringUtils.isNotEmpty(description) && !StringUtils.equals(description, item.getDescription())) {
+                item.setDescription(description);
+            } else {
+                throw new TODODescriptionInvalidException(item.getDescription());
+            }
+            log.info("Description updated, persisting item.");
+            todoManagementRepository.save(item);
+            return AppConstants.ITEM_UPDATED_MSG + todoId;
+        } catch(NumberFormatException ex) {
+            throw new InvalidTODORequestException(AppConstants.INVALID_ID_MSG);
         }
     }
 }
