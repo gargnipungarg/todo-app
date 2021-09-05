@@ -1,0 +1,8 @@
+#Build Application Image
+
+docker build -t todo-app .
+
+
+# Run Image
+
+docker run -it -p 8080:8080 --name todo-app todo-app
