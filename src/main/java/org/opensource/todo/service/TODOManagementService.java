@@ -2,9 +2,13 @@ package org.opensource.todo.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.mapstruct.factory.Mappers;
+import org.opensource.todo.constants.AppConstants;
 import org.opensource.todo.constants.TaskStatuses;
 import org.opensource.todo.exception.InvalidTODOTaskStatusException;
 import org.opensource.todo.exception.NoTODOTaskFoundException;
+import org.opensource.todo.exception.TODOTaskMappingException;
+import org.opensource.todo.mappers.TodoMapper;
 import org.opensource.todo.model.TODOEntity;
 import org.opensource.todo.model.TodoTask;
 import org.opensource.todo.respository.TODOManagementRepository;
@@ -34,20 +38,18 @@ public class TODOManagementService {
         }
     }
 
-    public String addTodoItem(TodoTask todo) throws InvalidTODOTaskStatusException {
+    public String addTodoItem(TodoTask todo) throws InvalidTODOTaskStatusException, TODOTaskMappingException {
         String status = todo.getStatus();
         try {
-            String validStatus = TaskStatuses.valueOf(status).getTaskStatus();
-            log.info("$$$$$$$$$$$$$$$"+validStatus);
-            TODOEntity todoEntity = new TODOEntity();
-            todoEntity.setDescription(todo.getDescription());
-            todoEntity.setCreationDate(todo.getCreationDate());
-            todoEntity.setDueDate(todo.getDueDate());
-            todoEntity.setCompletionDate(todo.getCompletionDate());
+            String validStatus = TaskStatuses.valueOf(status.toUpperCase().replace(AppConstants.SPACE, AppConstants.UNDERSCORE)).getTaskStatus();
+            log.info("Valid status found, persisting item with status : "+validStatus);
+            TODOEntity todoEntity = TodoMapper.INSTANCE.sourceToDestination(todo);
             todoManagementRepository.save(todoEntity);
-            return HttpStatus.ACCEPTED.toString();
+            return AppConstants.SUCCESS_MSG + todoEntity.getId();
         } catch (IllegalArgumentException ex) {
             throw new InvalidTODOTaskStatusException(status);
+        } catch (Exception e) {
+            throw new TODOTaskMappingException(e.getMessage());
         }
     }
 }
