@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -24,14 +25,14 @@ public class TODOManagementController {
         this.todoManagementService = todoManagementService;
     }
 
-    @GetMapping("/todos/status/{status}")
-    ResponseEntity<List<TODOEntity>> getAllItemsOfStatus(@PathVariable String status) throws InvalidTODOTaskStatusException {
+    @GetMapping("/todos/list")
+    ResponseEntity<List<TODOEntity>> getAllItemsOfStatus(@RequestParam Optional<String> status) throws InvalidTODOTaskStatusException {
         return new ResponseEntity<>(todoManagementService.findAllByStatus(status), HttpStatus.OK);
     }
 
-    @GetMapping("/todos/{taskId}")
-    ResponseEntity<TODOEntity> getTaskDetails(@PathVariable Long taskId) throws NoTODOTaskFoundException {
-        return new ResponseEntity<>(todoManagementService.findByTaskId(taskId), HttpStatus.OK);
+    @GetMapping("/todos")
+    ResponseEntity<TODOEntity> getTaskDetails(@RequestParam Long id) throws NoTODOTaskFoundException {
+        return new ResponseEntity<>(todoManagementService.findByTaskId(id), HttpStatus.OK);
     }
 
     @PostMapping("/todos/add")

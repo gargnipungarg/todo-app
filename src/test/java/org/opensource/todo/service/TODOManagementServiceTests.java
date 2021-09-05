@@ -158,7 +158,7 @@ public class TODOManagementServiceTests {
     void testFindAllByStatus() throws InvalidTODOTaskStatusException {
         TODOEntity item = TestUtil.getTestTODOEntity();
         Mockito.when(mockRepository.findAll()).thenReturn(Collections.singletonList(item));
-        final List<TODOEntity> allByStatus = serviceUnderTest.findAllByStatus(TestConstants.TEST_STATUS);
+        final List<TODOEntity> allByStatus = serviceUnderTest.findAllByStatus(Optional.of(TestConstants.TEST_STATUS));
         assertEquals(1, allByStatus.size());
         Mockito.verify(mockRepository, Mockito.times(TestConstants.ZERO_INT)).getById(anyLong());
     }
@@ -167,7 +167,7 @@ public class TODOManagementServiceTests {
     void testFindAllByStatusException() {
         TODOEntity item = TestUtil.getTestTODOEntity();
         Mockito.when(mockRepository.findAll()).thenReturn(Collections.singletonList(item));
-        assertThrows(InvalidTODOTaskStatusException.class, () -> serviceUnderTest.findAllByStatus(TestConstants.INVALID_STATUS));
+        assertThrows(InvalidTODOTaskStatusException.class, () -> serviceUnderTest.findAllByStatus(Optional.of(TestConstants.INVALID_STATUS)));
     }
 
 }

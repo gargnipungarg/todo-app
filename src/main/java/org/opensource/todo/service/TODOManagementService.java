@@ -12,6 +12,7 @@ import org.opensource.todo.respository.TODOManagementRepository;
 import org.opensource.todo.utils.AppUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -45,6 +46,9 @@ public class TODOManagementService {
             log.info("Valid status found, persisting item with status : "+validStatus);
             todo.setStatus(validStatus);
             TODOEntity todoEntity = TodoMapper.INSTANCE.sourceToDestination(todo);
+            if(ObjectUtils.isEmpty(todoEntity.getCreationDate())){
+                todoEntity.setCreationDate(new Date());
+            }
             if(AppUtils.validatePastDueStatus(todoEntity)){
                 todoEntity.setStatus(TaskStatuses.PAST_DUE.getTaskStatus());
             }
@@ -120,16 +124,17 @@ public class TODOManagementService {
         }
     }
 
-    public List<TODOEntity> findAllByStatus(String status) throws InvalidTODOTaskStatusException {
+    public List<TODOEntity> findAllByStatus(Optional<String> status) throws InvalidTODOTaskStatusException {
         List<TODOEntity> allItems = todoManagementRepository.findAll();
-        if(StringUtils.isNotEmpty(status)) {
+        if(status.isPresent()) {
+            String statusVal = status.get();
             log.info("Filtering TODO items on criteria of status: "+ status);
             try {
-                String validStatus = TaskStatuses.valueOf(status.toUpperCase().replace(AppConstants.SPACE, AppConstants.UNDERSCORE)).getTaskStatus();
+                String validStatus = TaskStatuses.valueOf(statusVal.toUpperCase().replace(AppConstants.SPACE, AppConstants.UNDERSCORE)).getTaskStatus();
                 log.info("Valid status found, persisting item with status : " + validStatus);
                 allItems = allItems.stream().filter(item -> StringUtils.equals(item.getStatus(), validStatus)).collect(Collectors.toList());
             } catch (IllegalArgumentException ex) {
-                throw new InvalidTODOTaskStatusException(status);
+                throw new InvalidTODOTaskStatusException(statusVal);
             }
         }
         return allItems;
