@@ -1,0 +1,158 @@
+{
+	"info": {
+		"_postman_id": "cb0afa80-cc16-4006-a2e1-fbb12be17a6f",
+		"name": "TODO",
+		"description": "TODO API Calls",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get TODO Details",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/todoservicev1/todos?id=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"todoservicev1",
+						"todos"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				},
+				"description": "Get TODO Details"
+			},
+			"response": []
+		},
+		{
+			"name": "Get All items by status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/todoservicev1/todos/list?status=not done",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"todoservicev1",
+						"todos",
+						"list"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "not done"
+						}
+					]
+				},
+				"description": "Get All items by status"
+			},
+			"response": []
+		},
+		{
+			"name": "POST TODO item",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"description\": \"Bank visit\",\r\n    \"status\": \"not done\",\r\n    \"creationDate\": \"2021-09-05\",\r\n    \"dueDate\": \"2021-10-05\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/todoservicev1/todos/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"todoservicev1",
+						"todos",
+						"add"
+					]
+				},
+				"description": "POST TODO item"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Desc",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"1\",\r\n   \"description\": \"Grocery Shopping\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/todoservicev1/todos/updateDesc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"todoservicev1",
+						"todos",
+						"updateDesc"
+					]
+				},
+				"description": "Update Desc"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Status",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"1\",\r\n   \"status\": \"done\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/todoservicev1/todos/updateStatus",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"todoservicev1",
+						"todos",
+						"updateStatus"
+					]
+				},
+				"description": "Update Status"
+			},
+			"response": []
+		}
+	]
+}
