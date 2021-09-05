@@ -13,22 +13,20 @@ import org.opensource.todo.model.TodoTask;
 import org.opensource.todo.respository.TODOManagementRepository;
 import org.opensource.todo.testConsts.TestConstants;
 import org.opensource.todo.testUtils.TestUtil;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-public class TODOManagementServiceTests {
+public class TODOManagementServiceImplTests {
 
     @Mock
     private TODOManagementRepository mockRepository;
 
     @InjectMocks
-    private TODOManagementService serviceUnderTest;
+    private TODOManagementServiceImpl serviceUnderTest;
 
     @Test
     void testFindByTaskId() throws Exception{
