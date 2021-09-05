@@ -1,0 +1,11 @@
+apply plugin: 'pmd'
+
+pmd {
+    consoleOutput = true
+    toolVersion = "6.21.0"
+    ignoreFailures = false
+    rulesMinimumPriority = 5
+    ruleSets = []
+    ruleSetFiles = files("quality/pmd-rules.xml")
+    sourceSets = [ project.sourceSets.main]
+}

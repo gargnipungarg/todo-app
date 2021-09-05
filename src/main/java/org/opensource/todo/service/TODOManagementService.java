@@ -42,7 +42,7 @@ public class TODOManagementService {
     public String addTodoItem(TodoTask todo) throws InvalidTODOTaskStatusException, TODOTaskMappingException {
         String status = todo.getStatus();
         try {
-            String validStatus = TaskStatuses.valueOf(status.toUpperCase().replace(AppConstants.SPACE, AppConstants.UNDERSCORE)).getTaskStatus();
+            String validStatus = AppUtils.getTaskStatus(status);
             log.info("Valid status found, persisting item with status : "+validStatus);
             todo.setStatus(validStatus);
             TODOEntity todoEntity = TodoMapper.INSTANCE.sourceToDestination(todo);
@@ -104,7 +104,7 @@ public class TODOManagementService {
                 throw new TODOPastDueException(AppConstants.PAST_DUE_MSG);
             }
             String status = todoTask.getStatus();
-            String validStatus = TaskStatuses.valueOf(status.toUpperCase().replace(AppConstants.SPACE, AppConstants.UNDERSCORE)).getTaskStatus();
+            String validStatus = AppUtils.getTaskStatus(status);
             log.info("Valid status found, persisting item with status : "+validStatus);
             item.setStatus(validStatus);
             if(StringUtils.equals(validStatus, TaskStatuses.DONE.getTaskStatus())) {
@@ -130,9 +130,9 @@ public class TODOManagementService {
             String statusVal = status.get();
             log.info("Filtering TODO items on criteria of status: "+ status);
             try {
-                String validStatus = TaskStatuses.valueOf(statusVal.toUpperCase().replace(AppConstants.SPACE, AppConstants.UNDERSCORE)).getTaskStatus();
+                String validStatus = AppUtils.getTaskStatus(statusVal);
                 log.info("Valid status found, persisting item with status : " + validStatus);
-                allItems = allItems.stream().filter(item -> StringUtils.equals(item.getStatus(), validStatus)).collect(Collectors.toList());
+                return allItems.stream().filter(item -> StringUtils.equals(item.getStatus(), validStatus)).collect(Collectors.toList());
             } catch (IllegalArgumentException ex) {
                 throw new InvalidTODOTaskStatusException(statusVal);
             }

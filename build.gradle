@@ -4,6 +4,7 @@ plugins {
 	id 'java'
 }
 apply from: file('quality/jacoco.gradle')
+apply from: file('quality/pmd.gradle')
 group = 'org.opensource'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
