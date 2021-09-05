@@ -6,10 +6,10 @@ import org.opensource.todo.model.TODOEntity;
 import org.opensource.todo.model.TodoTask;
 import org.opensource.todo.service.TODOManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +25,7 @@ public class TODOManagementController {
         this.todoManagementService = todoManagementService;
     }
 
+    @Cacheable("todos")
     @GetMapping("/todos/list")
     ResponseEntity<List<TODOEntity>> getAllItemsOfStatus(@RequestParam Optional<String> status) throws InvalidTODOTaskStatusException {
         return new ResponseEntity<>(todoManagementService.findAllByStatus(status), HttpStatus.OK);

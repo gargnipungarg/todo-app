@@ -127,7 +127,7 @@ public class TODOManagementServiceImpl implements TODOManagementService{
         List<TODOEntity> allItems = todoManagementRepository.findAll();
         if(status.isPresent()) {
             String statusVal = status.get();
-            log.info("Filtering TODO items on criteria of status: "+ status);
+            log.info("Filtering TODO items on criteria of status: "+ statusVal);
             try {
                 String validStatus = AppUtils.getTaskStatus(statusVal);
                 log.info("Valid status found, persisting item with status : " + validStatus);
