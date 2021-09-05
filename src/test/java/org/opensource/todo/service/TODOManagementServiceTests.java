@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.opensource.todo.constants.TaskStatuses;
 import org.opensource.todo.exception.*;
 import org.opensource.todo.model.TODOEntity;
 import org.opensource.todo.model.TodoTask;
@@ -71,7 +72,7 @@ public class TODOManagementServiceTests {
         TodoTask testTODOItem = TestUtil.getTestTODOItem();
         testTODOItem.setDescription(TestConstants.TEST_NEW_DESC);
         Mockito.when(mockRepository.getById(any())).thenReturn(TestUtil.getTestTODOEntity());
-        assertEquals(serviceUnderTest.changeDesc(testTODOItem), TestConstants.TEST_ITEM_UPDATED_MSG);;
+        assertEquals(serviceUnderTest.changeDesc(testTODOItem), TestConstants.TEST_ITEM_UPDATED_MSG);
         Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).getById(anyLong());
         Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).save(any());
     }
@@ -87,38 +88,90 @@ public class TODOManagementServiceTests {
     }
 
     @Test
-    void testChangeDescIdInvalid() throws Exception {
+    void testChangeDescIdInvalid(){
         TodoTask testTODOItem = new TodoTask();
         testTODOItem.setDescription(TestConstants.TEST_NEW_DESC);
         assertThrows(InvalidTODORequestException.class, () -> serviceUnderTest.changeDesc(testTODOItem));
     }
 
     @Test
-    void testChangeDescIdInvalidZero() throws Exception {
+    void testChangeDescIdInvalidZero() {
         TodoTask testTODOItem = new TodoTask();
         testTODOItem.setId(String.valueOf(TestConstants.ZERO_INT));
         assertThrows(InvalidTODORequestException.class, () -> serviceUnderTest.changeDesc(testTODOItem));
     }
 
-    /*
+    @Test
+    void testChangeStatus() throws Exception {
+        TodoTask testTODOItem = TestUtil.getTestTODOItem();
+        testTODOItem.setStatus(TaskStatuses.NOT_DONE.getTaskStatus());
+        Mockito.when(mockRepository.getById(any())).thenReturn(TestUtil.getTestTODOEntity());
+        assertEquals(serviceUnderTest.changeStatus(testTODOItem), TestConstants.TEST_ITEM_UPDATED_MSG);
+        Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).getById(anyLong());
+    }
+
+    @Test
+    void testChangeStatusInvalidId() {
+        TodoTask testTODOItem = new TodoTask();
+        testTODOItem.setStatus(TaskStatuses.NOT_DONE.getTaskStatus());
+        assertThrows(InvalidTODORequestException.class, () -> serviceUnderTest.changeStatus(testTODOItem));
+    }
+
+    @Test
+    void testChangeStatusInvalidIdVal() {
+        TodoTask testTODOItem = TestUtil.getTestTODOItem();
+        testTODOItem.setStatus(TestConstants.INVALID_STATUS);
+        Mockito.when(mockRepository.getById(any())).thenReturn(TestUtil.getTestTODOEntity());
+        assertThrows(InvalidTODOTaskStatusException.class, () -> serviceUnderTest.changeStatus(testTODOItem));
+        Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).getById(anyLong());
+    }
+
+    @Test
+    void testChangeStatusOfDueItem() {
+        TodoTask testTODOItem = TestUtil.getTestTODOItem();
+        TODOEntity testTODOEntity = TestUtil.getTestTODOEntity();
+        testTODOEntity.setStatus(TaskStatuses.PAST_DUE.getTaskStatus());
+        Mockito.when(mockRepository.getById(any())).thenReturn(testTODOEntity);
+        assertThrows(TODOPastDueException.class, () -> serviceUnderTest.changeStatus(testTODOItem));
+        Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).getById(anyLong());
+    }
+
+    @Test
+    void testChangeStatusOfIdZero() {
+        TodoTask testTODOItem = TestUtil.getTestTODOItem();
+        testTODOItem.setId(String.valueOf(TestConstants.ZERO_INT));
+        assertThrows(InvalidTODORequestException.class, () -> serviceUnderTest.changeStatus(testTODOItem));
+        Mockito.verify(mockRepository, Mockito.times(TestConstants.ZERO_INT)).getById(anyLong());
+    }
 
 
 
-    public String changeDesc(TodoTask todoTask) throws TODODescriptionBlankException, InvalidTODORequestException {
-        Long todoId = todoTask.getId();
-        if(todoId != null) {
-            TODOEntity item = todoManagementRepository.getById(todoId);
-            String description = todoTask.getDescription();
-            if(StringUtils.isNotEmpty(description)) {
-                item.setDescription(description);
-            } else {
-                throw new TODODescriptionBlankException(item.getDescription());
+/*
+
+   public String changeStatus(TodoTask todoTask) throws InvalidTODORequestException, InvalidTODOTaskStatusException, TODOPastDueException {
+        try {
+            log.info("Todo task: "+todoTask);
+            Long todoId = Long.valueOf(todoTask.getId());
+            log.info("Querying for TODO id: "+todoId);
+            if(todoId == 0) {
+                throw new InvalidTODORequestException(AppConstants.ID_REQUIRED_MSG);
             }
-            log.info("Description updated, persisting item.");
+            TODOEntity item = todoManagementRepository.getById(todoId);
+            if(AppUtils.isDue(item.getStatus())){
+                throw new TODOPastDueException(AppConstants.PAST_DUE_MSG);
+            }
+            String status = todoTask.getStatus();
+            String validStatus = TaskStatuses.valueOf(status.toUpperCase().replace(AppConstants.SPACE, AppConstants.UNDERSCORE)).getTaskStatus();
+            log.info("Valid status found, persisting item with status : "+validStatus);
+            item.setStatus(status);
+            log.info("Status updated, persisting item.");
             todoManagementRepository.save(item);
             return AppConstants.ITEM_UPDATED_MSG + todoId;
-        } else {
-            throw new InvalidTODORequestException(AppConstants.ID_REQUIRED_MSG);
+        } catch(NumberFormatException ex) {
+            throw new InvalidTODORequestException(AppConstants.INVALID_ID_MSG);
+        } catch (IllegalArgumentException ex) {
+            throw new InvalidTODOTaskStatusException(todoTask.getStatus());
         }
+    }
     }*/
 }

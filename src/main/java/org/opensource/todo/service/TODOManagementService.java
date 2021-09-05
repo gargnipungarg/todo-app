@@ -9,6 +9,7 @@ import org.opensource.todo.mappers.TodoMapper;
 import org.opensource.todo.model.TODOEntity;
 import org.opensource.todo.model.TodoTask;
 import org.opensource.todo.respository.TODOManagementRepository;
+import org.opensource.todo.utils.AppUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -69,6 +70,32 @@ public class TODOManagementService {
             return AppConstants.ITEM_UPDATED_MSG + todoId;
         } catch(NumberFormatException ex) {
             throw new InvalidTODORequestException(AppConstants.INVALID_ID_MSG);
+        }
+    }
+
+    public String changeStatus(TodoTask todoTask) throws InvalidTODORequestException, InvalidTODOTaskStatusException, TODOPastDueException {
+        try {
+            log.info("Todo task: "+todoTask);
+            Long todoId = Long.valueOf(todoTask.getId());
+            log.info("Querying for TODO id: "+todoId);
+            if(todoId == 0) {
+                throw new InvalidTODORequestException(AppConstants.ID_REQUIRED_MSG);
+            }
+            TODOEntity item = todoManagementRepository.getById(todoId);
+            if(AppUtils.isDue(item.getStatus())){
+                throw new TODOPastDueException(AppConstants.PAST_DUE_MSG);
+            }
+            String status = todoTask.getStatus();
+            String validStatus = TaskStatuses.valueOf(status.toUpperCase().replace(AppConstants.SPACE, AppConstants.UNDERSCORE)).getTaskStatus();
+            log.info("Valid status found, persisting item with status : "+validStatus);
+            item.setStatus(status);
+            log.info("Status updated, persisting item.");
+            todoManagementRepository.save(item);
+            return AppConstants.ITEM_UPDATED_MSG + todoId;
+        } catch(NumberFormatException ex) {
+            throw new InvalidTODORequestException(AppConstants.INVALID_ID_MSG);
+        } catch (IllegalArgumentException ex) {
+            throw new InvalidTODOTaskStatusException(todoTask.getStatus());
         }
     }
 }

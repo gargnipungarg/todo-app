@@ -33,4 +33,12 @@ public class ResponseHandler {
         return ex.getMessage();
     }
 
+    @ResponseBody
+    @ExceptionHandler(TODOPastDueException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    String todoMappingFailedHandler(TODOPastDueException ex) {
+        return ex.getMessage();
+    }
+
+
 }

@@ -36,4 +36,9 @@ public class TODOManagementController {
     ResponseEntity<String> updateDesc(@RequestBody TodoTask todo) throws InvalidTODORequestException, TODODescriptionInvalidException {
         return new ResponseEntity<>(todoManagementService.changeDesc(todo), HttpStatus.OK);
     }
+
+    @PostMapping("/todos/updateStatus")
+    ResponseEntity<String> updateStatus(@RequestBody TodoTask todo) throws InvalidTODOTaskStatusException, TODOPastDueException, InvalidTODORequestException {
+        return new ResponseEntity<>(todoManagementService.changeStatus(todo), HttpStatus.OK);
+    }
 }
