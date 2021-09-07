@@ -7,7 +7,7 @@ info:
   contact:
     email: "gargnipungarg@gmail.com"
 host: "localhost"
-basePath: "/todoservicev1"
+basePath: "/todoservicev1/todos"
 tags:
   - name: "user"
     description: "Nipun"
@@ -17,7 +17,7 @@ schemes:
   - "https"
   - "http"
 paths:
-  /todos/add:
+  /add:
     post:
       tags:
         - "postItem"
@@ -34,31 +34,160 @@ paths:
           description: "TODO Item Model"
           required: true
           schema:
-            $ref: "#/definitions/TodoTask"
+            $ref: "#/definitions/TodoAddItemRequest"
       responses:
-        "405":
-          description: "Invalid input"
+        "400":
+          description: "Bad request"
+        "202":
+          description: "Accepted"
+  /updateDesc:
+    post:
+      tags:
+        - "updateDesc"
+      summary: "Update description of an item"
+      description: "Update description of an item"
+      operationId: "updateDesc"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Update description of an item"
+          required: true
+          schema:
+            $ref: "#/definitions/TodoUpdateDescRequest"
+      responses:
+        "400":
+          description: "Bad request"
+        "200":
+          description: "Ok"
+  /markDone:
+    post:
+      tags:
+        - "markDone"
+      summary: "Mark done to an item"
+      description: "Mark done to an item"
+      operationId: "markDone"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: "query"
+          description: "id"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "400":
+          description: "Bad request"
+        "200":
+          description: "Ok"
+  /markNotDone:
+    post:
+      tags:
+        - "markNotDone"
+      summary: "Mark not done to an item"
+      description: "Mark not done to an item"
+      operationId: "markNotDone"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: "query"
+          description: "id"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "400":
+          description: "Bad request"
+        "200":
+          description: "Ok"
+  /:
+    get:
+      tags:
+        - "getTODO"
+      summary: "Get details of an item"
+      description: "Get details of an item"
+      operationId: "getTODO"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: "query"
+          description: "id"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "400":
+          description: "Bad request"
+        "200":
+          description: "Ok"
+  /list:
+    get:
+      tags:
+        - "list"
+      summary: "List of all items or with filter of status of not done"
+      description: "List of all items or with filter of status of not done"
+      operationId: "list"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "notDone"
+          in: "query"
+          description: "notDone flag for not done filter of statuses"
+          required: false
+          type: "boolean"
+      responses:
+        "400":
+          description: "Bad request"
+        "200":
+          description: "Accepted"
 definitions:
-  TodoTask:
+  TodoAddItemRequest:
+    type: "object"
+    properties:
+      description:
+        type: "string"
+      dueDate:
+        type: "string"
+        format: "date-time"
+  TodoUpdateDescRequest:
+    type: "object"
+    properties:
+      description:
+        type: "string"
+      id:
+        type: "integer"
+        format: "int64"
+  TODOEntity:
     type: "object"
     properties:
       id:
-        type: "string"
+        type: "integer"
+        format: "int64"
       description:
         type: "string"
       status:
         type: "string"
-        enum:
-          - "not done"
-          - "done"
-          - "past due"
+      dueDate:
+        type: "string"
+        format: "date-time"
       creationDate:
         type: "string"
         format: "date-time"
       completionDate:
-        type: "string"
-        format: "date-time"
-      dueDate:
         type: "string"
         format: "date-time"
   ApiResponse:
