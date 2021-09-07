@@ -17,7 +17,7 @@
  - [PMD](https://docs.gradle.org/current/userguide/pmd_plugin.html) for code quality analysis
  - [Jacoco](https://docs.gradle.org/current/userguide/jacoco_plugin.html) for Junit Test coverage report
  - [Junit 5](https://junit.org/junit5) for unit tests
- - [Docker](https://www.docker.com/) for containerizing the application
+ - [Docker](https://www.docker.com/) for containerizing the application. More info in [screenshots](./screenshots).
  - [H2](https://www.h2database.com/html/main.html) as in memory database
  - [Lombok](https://projectlombok.org/) for annotation processor
  - [SpringBoot cache starter](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-cache) library for in memory cache of todo items
@@ -29,7 +29,7 @@
  - To run project on Linux/MacOS, use [run.sh](./run.sh), for windows - use [run.bat](./run.bat)
  - [docker-commands.txt](docker-commands.txt) shows all docker related operations
  - Postman collection for hitting endpoints with request body - [TODO.postman_collection.json](TODO.postman_collection.json)
- - Automated tests are part of build process. Passing test is mandatory step for successful build.
+ - Automated tests are part of build process. Passing test is mandatory step for successful build. Sample test report - [Report](./test-report.PNG)
 
 # API Contract 
 
