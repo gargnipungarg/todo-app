@@ -1,7 +1,12 @@
 package org.opensource.todo.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.opensource.todo.exception.*;
+import org.opensource.todo.exception.NoTODOTaskFoundException;
+import org.opensource.todo.exception.TODOPastDueException;
+import org.opensource.todo.exception.TODOTaskMappingException;
+import org.opensource.todo.exception.TODODescriptionInvalidException;
+import org.opensource.todo.exception.InvalidTODORequestException;
+import org.opensource.todo.exception.InvalidTODOTaskStatusException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,6 +44,5 @@ public class ResponseHandler {
     String todoMappingFailedHandler(TODOPastDueException ex) {
         return ex.getMessage();
     }
-
 
 }

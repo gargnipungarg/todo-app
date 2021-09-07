@@ -1,23 +1,21 @@
 package org.opensource.todo.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@JsonIgnoreProperties(ignoreUnknown=true)
-public class TodoTask {
+public class TodoAddItemRequest {
 
-    private String id;
+    @NotBlank(message = "Description is mandatory")
     private String description;
-    private String status;
-    private Date creationDate;
-    private Date completionDate;
+    @NotNull(message = "Item Due date is mandatory")
     private Date dueDate;
 }

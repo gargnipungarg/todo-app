@@ -1,12 +1,12 @@
 # Todo-App
    This API offers CRUD operations on managing TODO items. You can add, list, update via various endpoints exposed.
    Following operations are supported:
-   - Add an item to persistence layer
-   - Update status as Done, completion date is automatically updated as current date
+   - Add an item to persistence layer.
+   - Update status as Done, completion date is automatically updated as current date.
    - Update status as Not Done, completion date is automatically reset.
    - Update description of an existing TODO item.  
-   - List all todo items with a given status.
-   - List all todo items by not passing any status filter.
+   - List all todo items with "Not Done" status, caching is placed on this endpoint for 30 seconds to handle multiple incoming request.
+   - List all todo items, caching is placed on this endpoint for 30 seconds to handle multiple incoming request. This endpoint uses the same endpoint as in point above. Providing an option request parameter boolean "notDone", you can choose either to list all statues or only "Not Done". 
 
 # Tech Stack
  - [JDK 11](https://openjdk.java.net/projects/jdk/11/)

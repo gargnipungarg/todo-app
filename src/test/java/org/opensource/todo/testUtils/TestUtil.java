@@ -1,44 +1,53 @@
 package org.opensource.todo.testUtils;
 
 import org.apache.commons.lang3.time.DateUtils;
-import org.opensource.todo.mappers.TodoMapper;
+import org.opensource.todo.mappers.TodoAddItemMapper;
 import org.opensource.todo.model.TODOEntity;
-import org.opensource.todo.model.TodoTask;
+import org.opensource.todo.model.TodoAddItemRequest;
+import org.opensource.todo.model.TodoUpdateDescRequest;
 import org.opensource.todo.testConsts.TestConstants;
 
 import java.util.Date;
 
 public class TestUtil {
 
-    public static TodoTask getTestTODOItem() {
-        return TodoTask.builder()
-                .id(String.valueOf(TestConstants.ONE_INT))
-                .creationDate(new Date())
+    public static TodoAddItemRequest getTestTODOItem() {
+        return TodoAddItemRequest.builder()
                 .dueDate(DateUtils.addDays(new Date(),1))
-                .completionDate(new Date())
                 .description(TestConstants.TEST_DESC)
-                .status(TestConstants.TEST_STATUS)
                 .build();
     }
 
-    public static TodoTask getTestTODOPastItem() {
-        return TodoTask.builder()
-                .id(String.valueOf(TestConstants.ONE_INT))
-                .creationDate(new Date())
+    public static TodoAddItemRequest getPastTestTODOItem() {
+        return TodoAddItemRequest.builder()
                 .dueDate(DateUtils.addDays(new Date(),-1))
-                .completionDate(new Date())
                 .description(TestConstants.TEST_DESC)
-                .status(TestConstants.TEST_STATUS)
                 .build();
     }
 
     public static TODOEntity getTestTODOEntity() {
-        TodoTask task = getTestTODOItem();
-        return TodoMapper.INSTANCE.sourceToDestination(task);
+        TodoAddItemRequest task = getTestTODOItem();
+        TODOEntity todoEntity = TodoAddItemMapper.INSTANCE.sourceToDestination(task);
+        todoEntity.setStatus(TestConstants.TEST_NOT_DONE_STATUS);
+        todoEntity.setId(TestConstants.ONE_LONG);
+        todoEntity.setCreationDate(DateUtils.addDays(task.getDueDate(), -1));
+        return todoEntity;
     }
 
-    public static TODOEntity getTestPastTODOEntity() {
-        TodoTask task = getTestTODOPastItem();
-        return TodoMapper.INSTANCE.sourceToDestination(task);
+    public static TODOEntity getPastTestTODOEntity() {
+        TodoAddItemRequest task = getPastTestTODOItem();
+        TODOEntity todoEntity = TodoAddItemMapper.INSTANCE.sourceToDestination(task);
+        todoEntity.setStatus(TestConstants.TEST_DUE_STATUS);
+        todoEntity.setId(TestConstants.ONE_LONG);
+        todoEntity.setCreationDate(DateUtils.addDays(task.getDueDate(), -1));
+        return todoEntity;
     }
+
+    public static TodoUpdateDescRequest getTodoUpdateDescRequest() {
+        return TodoUpdateDescRequest.builder()
+                .id(TestConstants.ONE_LONG)
+                .description(TestConstants.TEST_DESC)
+                .build();
+    }
+
 }

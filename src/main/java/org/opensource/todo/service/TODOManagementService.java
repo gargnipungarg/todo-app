@@ -1,16 +1,22 @@
 package org.opensource.todo.service;
 
-import org.opensource.todo.exception.*;
+import org.opensource.todo.exception.NoTODOTaskFoundException;
+import org.opensource.todo.exception.TODOPastDueException;
+import org.opensource.todo.exception.TODOTaskMappingException;
+import org.opensource.todo.exception.TODODescriptionInvalidException;
+import org.opensource.todo.exception.InvalidTODORequestException;
+import org.opensource.todo.exception.InvalidTODOTaskStatusException;
+import org.opensource.todo.model.TodoAddItemRequest;
+import org.opensource.todo.model.TodoUpdateDescRequest;
 import org.opensource.todo.model.TODOEntity;
-import org.opensource.todo.model.TodoTask;
 import java.util.List;
 import java.util.Optional;
 
 public interface TODOManagementService {
 
     TODOEntity findByTaskId(Long taskId) throws NoTODOTaskFoundException;
-    String addTodoItem(TodoTask todo) throws InvalidTODOTaskStatusException, TODOTaskMappingException;
-    String changeDesc(TodoTask todoTask) throws TODODescriptionInvalidException, InvalidTODORequestException, TODOPastDueException;
-    String changeStatus(TodoTask todoTask) throws InvalidTODORequestException, InvalidTODOTaskStatusException, TODOPastDueException;
-    List<TODOEntity> findAllByStatus(Optional<String> status) throws InvalidTODOTaskStatusException;
+    String addTodoItem(TodoAddItemRequest todo) throws TODOTaskMappingException, TODOPastDueException;
+    String changeDesc(TodoUpdateDescRequest todoTask) throws TODODescriptionInvalidException, InvalidTODORequestException, TODOPastDueException;
+    String changeStatus(Long id, String status) throws InvalidTODORequestException, InvalidTODOTaskStatusException, TODOPastDueException;
+    List<TODOEntity> findAllByStatus(Optional<Boolean> status);
 }

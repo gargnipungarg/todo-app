@@ -1,0 +1,76 @@
+swagger: "2.0"
+info:
+  description: "TODO Service offers CRUD operations on managing TODO items. You can add, list, update via various endpoints exposed."
+  version: "1.0.0"
+  title: "TODO App"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "gargnipungarg@gmail.com"
+host: "localhost"
+basePath: "/todoservicev1"
+tags:
+  - name: "user"
+    description: "Nipun"
+  - name: "project"
+    description: "TODO API"
+schemes:
+  - "https"
+  - "http"
+paths:
+  /todos/add:
+    post:
+      tags:
+        - "postItem"
+      summary: "Add a new todo item"
+      description: "Add a new todo item"
+      operationId: "postItem"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "TODO Item Model"
+          required: true
+          schema:
+            $ref: "#/definitions/TodoTask"
+      responses:
+        "405":
+          description: "Invalid input"
+definitions:
+  TodoTask:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      description:
+        type: "string"
+      status:
+        type: "string"
+        enum:
+          - "not done"
+          - "done"
+          - "past due"
+      creationDate:
+        type: "string"
+        format: "date-time"
+      completionDate:
+        type: "string"
+        format: "date-time"
+      dueDate:
+        type: "string"
+        format: "date-time"
+  ApiResponse:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      type:
+        type: "string"
+      message:
+        type: "string"
+externalDocs:
+  description: "Repository"
+  url: "https://github.com/gargnipungarg/todo-app"

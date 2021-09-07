@@ -6,18 +6,25 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.opensource.todo.constants.TaskStatuses;
-import org.opensource.todo.exception.*;
+import org.opensource.todo.exception.InvalidTODORequestException;
+import org.opensource.todo.exception.InvalidTODOTaskStatusException;
+import org.opensource.todo.exception.NoTODOTaskFoundException;
+import org.opensource.todo.exception.TODODescriptionInvalidException;
+import org.opensource.todo.exception.TODOPastDueException;
+import org.opensource.todo.exception.TODOTaskMappingException;
 import org.opensource.todo.model.TODOEntity;
-import org.opensource.todo.model.TodoTask;
+import org.opensource.todo.model.TodoAddItemRequest;
+import org.opensource.todo.model.TodoUpdateDescRequest;
 import org.opensource.todo.respository.TODOManagementRepository;
 import org.opensource.todo.testConsts.TestConstants;
 import org.opensource.todo.testUtils.TestUtil;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 
 @ExtendWith(MockitoExtension.class)
 public class TODOManagementServiceImplTests {
@@ -45,23 +52,21 @@ public class TODOManagementServiceImplTests {
 
     @Test
     void testAddTodoItem() throws Exception{
-        TodoTask testTODOItem = TestUtil.getTestTODOItem();
-        final String testResponse = serviceUnderTest.addTodoItem(testTODOItem);
+        TodoAddItemRequest testTODOItem = TestUtil.getTestTODOItem();
+        serviceUnderTest.addTodoItem(testTODOItem);
         Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).save(any());
-        assertEquals(testResponse, TestConstants.TEST_ITEM_CREATED_MSG);
     }
 
     @Test
-    void testInvalidStatusForAddTodoItem() {
-        TodoTask testTODOItem = TestUtil.getTestTODOItem();
-        testTODOItem.setStatus(TestConstants.INVALID_STATUS);
-        assertThrows(InvalidTODOTaskStatusException.class, () -> serviceUnderTest.addTodoItem(testTODOItem));
+    void testInvalidDateForAddTodoItem() {
+        TodoAddItemRequest testTODOItem = TestUtil.getPastTestTODOItem();
+        assertThrows(TODOPastDueException.class, () -> serviceUnderTest.addTodoItem(testTODOItem));
         Mockito.verify(mockRepository, Mockito.times(TestConstants.ZERO_INT)).save(any());
     }
 
     @Test
     void testMappingExceptionForAddTodoItem(){
-        TodoTask testTODOItem = TestUtil.getTestTODOItem();
+        TodoAddItemRequest testTODOItem = TestUtil.getTestTODOItem();
         Mockito.when(mockRepository.save(any())).thenThrow(new RuntimeException(TestConstants.MAPPING_EXCEPTION));
         assertThrows(TODOTaskMappingException.class, () -> serviceUnderTest.addTodoItem(testTODOItem));
         Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).save(any());
@@ -69,103 +74,70 @@ public class TODOManagementServiceImplTests {
 
     @Test
     void testChangeDesc() throws Exception {
-        TodoTask testTODOItem = TestUtil.getTestTODOItem();
-        testTODOItem.setDescription(TestConstants.TEST_NEW_DESC);
+        TodoUpdateDescRequest request = TestUtil.getTodoUpdateDescRequest();
         Mockito.when(mockRepository.getById(any())).thenReturn(TestUtil.getTestTODOEntity());
-        assertEquals(serviceUnderTest.changeDesc(testTODOItem), TestConstants.TEST_ITEM_UPDATED_MSG);
+        assertEquals(serviceUnderTest.changeDesc(request), TestConstants.TEST_ITEM_UPDATED_MSG);
         Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).getById(anyLong());
         Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).save(any());
     }
 
     @Test
-    void testChangeDescPastItem() throws Exception {
-        TodoTask testTODOItem = TestUtil.getTestTODOPastItem();
-        testTODOItem.setDescription(TestConstants.TEST_NEW_DESC);
-        Mockito.when(mockRepository.getById(any())).thenReturn(TestUtil.getTestPastTODOEntity());
-        assertThrows(TODOPastDueException.class, () -> serviceUnderTest.changeDesc(testTODOItem));
+    void testChangeDescEmpty() {
+        TodoUpdateDescRequest request = TestUtil.getTodoUpdateDescRequest();
+        request.setDescription("");
+        Mockito.when(mockRepository.getById(any())).thenReturn(TestUtil.getTestTODOEntity());
+        assertThrows(TODODescriptionInvalidException.class, () -> serviceUnderTest.changeDesc(request));
     }
 
     @Test
-    void testChangeDescSameDesc() {
-        TodoTask testTODOItem = TestUtil.getTestTODOItem();
-        Mockito.when(mockRepository.getById(any())).thenReturn(TestUtil.getTestTODOEntity());
-        testTODOItem.setStatus(TestConstants.TEST_NEW_DESC);
-        assertThrows(TODODescriptionInvalidException.class, () -> serviceUnderTest.changeDesc(testTODOItem));
-        Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).getById(anyLong());
-        Mockito.verify(mockRepository, Mockito.times(TestConstants.ZERO_INT)).save(any());
+    void testChangeDescPastItem() {
+        TodoUpdateDescRequest request = TestUtil.getTodoUpdateDescRequest();
+        Mockito.when(mockRepository.getById(any())).thenReturn(TestUtil.getPastTestTODOEntity());
+        assertThrows(TODOPastDueException.class, () -> serviceUnderTest.changeDesc(request));
     }
 
     @Test
     void testChangeDescIdInvalid(){
-        TodoTask testTODOItem = new TodoTask();
-        testTODOItem.setDescription(TestConstants.TEST_NEW_DESC);
-        assertThrows(InvalidTODORequestException.class, () -> serviceUnderTest.changeDesc(testTODOItem));
+        TodoUpdateDescRequest request = TestUtil.getTodoUpdateDescRequest();
+        request.setDescription(TestConstants.TEST_NEW_DESC);
+        Mockito.when(mockRepository.getById(any())).thenThrow(javax.persistence.EntityNotFoundException.class);
+        assertThrows(InvalidTODORequestException.class, () -> serviceUnderTest.changeDesc(request));
     }
 
     @Test
-    void testChangeDescIdInvalidZero() {
-        TodoTask testTODOItem = new TodoTask();
-        testTODOItem.setId(String.valueOf(TestConstants.ZERO_INT));
-        assertThrows(InvalidTODORequestException.class, () -> serviceUnderTest.changeDesc(testTODOItem));
-    }
-
-    @Test
-    void testChangeStatus() throws Exception {
-        TodoTask testTODOItem = TestUtil.getTestTODOItem();
-        testTODOItem.setStatus(TaskStatuses.NOT_DONE.getTaskStatus());
+    void testChangeNotDoneStatus() throws Exception {
         Mockito.when(mockRepository.getById(any())).thenReturn(TestUtil.getTestTODOEntity());
-        assertEquals(serviceUnderTest.changeStatus(testTODOItem), TestConstants.TEST_ITEM_UPDATED_MSG);
+        assertEquals(serviceUnderTest.changeStatus(TestConstants.ONE_LONG, TestConstants.TEST_NOT_DONE_STATUS), TestConstants.TEST_ITEM_UPDATED_MSG);
+        Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).getById(anyLong());
+    }
+
+    @Test
+    void testChangeDoneStatus() throws Exception {
+        Mockito.when(mockRepository.getById(any())).thenReturn(TestUtil.getTestTODOEntity());
+        assertEquals(serviceUnderTest.changeStatus(TestConstants.ONE_LONG, TestConstants.TEST_DONE_STATUS), TestConstants.TEST_ITEM_UPDATED_MSG);
         Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).getById(anyLong());
     }
 
     @Test
     void testChangeStatusInvalidId() {
-        TodoTask testTODOItem = new TodoTask();
-        testTODOItem.setStatus(TaskStatuses.NOT_DONE.getTaskStatus());
-        assertThrows(InvalidTODORequestException.class, () -> serviceUnderTest.changeStatus(testTODOItem));
-    }
-
-    @Test
-    void testChangeStatusInvalidIdVal() {
-        TodoTask testTODOItem = TestUtil.getTestTODOItem();
-        testTODOItem.setStatus(TestConstants.INVALID_STATUS);
-        Mockito.when(mockRepository.getById(any())).thenReturn(TestUtil.getTestTODOEntity());
-        assertThrows(InvalidTODOTaskStatusException.class, () -> serviceUnderTest.changeStatus(testTODOItem));
-        Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).getById(anyLong());
+        assertThrows(InvalidTODORequestException.class, () -> serviceUnderTest.changeStatus(0l, TestConstants.TEST_NOT_DONE_STATUS));
     }
 
     @Test
     void testChangeStatusOfDueItem() {
-        TodoTask testTODOItem = TestUtil.getTestTODOItem();
-        TODOEntity testTODOEntity = TestUtil.getTestTODOEntity();
-        testTODOEntity.setStatus(TaskStatuses.PAST_DUE.getTaskStatus());
+        TODOEntity testTODOEntity = TestUtil.getPastTestTODOEntity();
         Mockito.when(mockRepository.getById(any())).thenReturn(testTODOEntity);
-        assertThrows(TODOPastDueException.class, () -> serviceUnderTest.changeStatus(testTODOItem));
+        assertThrows(TODOPastDueException.class, () -> serviceUnderTest.changeStatus(TestConstants.ONE_LONG, TestConstants.TEST_NOT_DONE_STATUS));
         Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).getById(anyLong());
-    }
-
-    @Test
-    void testChangeStatusOfIdZero() {
-        TodoTask testTODOItem = TestUtil.getTestTODOItem();
-        testTODOItem.setId(String.valueOf(TestConstants.ZERO_INT));
-        assertThrows(InvalidTODORequestException.class, () -> serviceUnderTest.changeStatus(testTODOItem));
-        Mockito.verify(mockRepository, Mockito.times(TestConstants.ZERO_INT)).getById(anyLong());
     }
 
     @Test
     void testFindAllByStatus() throws InvalidTODOTaskStatusException {
         TODOEntity item = TestUtil.getTestTODOEntity();
         Mockito.when(mockRepository.findAll()).thenReturn(Collections.singletonList(item));
-        final List<TODOEntity> allByStatus = serviceUnderTest.findAllByStatus(Optional.of(TestConstants.TEST_STATUS));
+        final List<TODOEntity> allByStatus = serviceUnderTest.findAllByStatus(Optional.of(Boolean.TRUE));
         assertEquals(1, allByStatus.size());
         Mockito.verify(mockRepository, Mockito.times(TestConstants.ZERO_INT)).getById(anyLong());
-    }
-
-    @Test
-    void testFindAllByStatusException() {
-        TODOEntity item = TestUtil.getTestTODOEntity();
-        Mockito.when(mockRepository.findAll()).thenReturn(Collections.singletonList(item));
-        assertThrows(InvalidTODOTaskStatusException.class, () -> serviceUnderTest.findAllByStatus(Optional.of(TestConstants.INVALID_STATUS)));
     }
 
 }

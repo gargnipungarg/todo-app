@@ -39,7 +39,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/todoservicev1/todos/list?status=not done",
+					"raw": "http://localhost:8080/todoservicev1/todos/list?notDone=true",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -52,8 +52,8 @@
 					],
 					"query": [
 						{
-							"key": "status",
-							"value": "not done"
+							"key": "notDone",
+							"value": "true"
 						}
 					]
 				},
@@ -68,7 +68,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n   \"description\": \"Bank visit\",\r\n    \"status\": \"not done\",\r\n    \"creationDate\": \"2021-09-05\",\r\n    \"dueDate\": \"2021-10-05\"\r\n}",
+					"raw": "{\r\n   \"description\": \"Bank visit\",\r\n    \"dueDate\": \"2021-09-08\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -99,7 +99,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": \"1\",\r\n   \"description\": \"Grocery Shopping\"\r\n}",
+					"raw": "{\r\n    \"id\": 1,\r\n   \"description\": \"Grocery Shopping\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -124,13 +124,13 @@
 			"response": []
 		},
 		{
-			"name": "Update Status",
+			"name": "Update Status - Done",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": \"1\",\r\n   \"status\": \"done\"\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -138,7 +138,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/todoservicev1/todos/updateStatus",
+					"raw": "http://localhost:8080/todoservicev1/todos/markDone?id=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -147,10 +147,53 @@
 					"path": [
 						"todoservicev1",
 						"todos",
-						"updateStatus"
+						"markDone"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						}
 					]
 				},
-				"description": "Update Status"
+				"description": "Update Status - Done"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Status - Not Done",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/todoservicev1/todos/markNotDone?id=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"todoservicev1",
+						"todos",
+						"markNotDone"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				},
+				"description": "Update Status - Not Done"
 			},
 			"response": []
 		}

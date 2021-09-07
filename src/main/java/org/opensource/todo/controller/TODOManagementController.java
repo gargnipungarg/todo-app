@@ -1,53 +1,68 @@
 package org.opensource.todo.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.opensource.todo.exception.*;
+
+import org.opensource.todo.constants.TaskStatuses;
+import org.opensource.todo.exception.NoTODOTaskFoundException;
+import org.opensource.todo.exception.TODOPastDueException;
+import org.opensource.todo.exception.TODOTaskMappingException;
+import org.opensource.todo.exception.TODODescriptionInvalidException;
+import org.opensource.todo.exception.InvalidTODORequestException;
+import org.opensource.todo.exception.InvalidTODOTaskStatusException;
+import org.opensource.todo.model.TodoAddItemRequest;
+import org.opensource.todo.model.TodoUpdateDescRequest;
 import org.opensource.todo.model.TODOEntity;
-import org.opensource.todo.model.TodoTask;
 import org.opensource.todo.service.TODOManagementService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
 @RestController
-@RequestMapping("/todoservicev1")
+@RequestMapping("/todoservicev1/todos")
+@RequiredArgsConstructor
 public class TODOManagementController {
 
-    private TODOManagementService todoManagementService;
-
-    @Autowired
-    public void setTodoManagementService(TODOManagementService todoManagementService) {
-        this.todoManagementService = todoManagementService;
-    }
+    private final TODOManagementService todoManagementService;
 
     @Cacheable("todos")
-    @GetMapping("/todos/list")
-    ResponseEntity<List<TODOEntity>> getAllItemsOfStatus(@RequestParam Optional<String> status) throws InvalidTODOTaskStatusException {
-        return new ResponseEntity<>(todoManagementService.findAllByStatus(status), HttpStatus.OK);
+    @GetMapping("/list")
+    ResponseEntity<List<TODOEntity>> getAllItemsOfStatus(@RequestParam Optional<Boolean> notDone) {
+        return new ResponseEntity<>(todoManagementService.findAllByStatus(notDone), HttpStatus.OK);
     }
 
-    @GetMapping("/todos")
+    @GetMapping
     ResponseEntity<TODOEntity> getTaskDetails(@RequestParam Long id) throws NoTODOTaskFoundException {
         return new ResponseEntity<>(todoManagementService.findByTaskId(id), HttpStatus.OK);
     }
 
-    @PostMapping("/todos/add")
-    ResponseEntity<String> addTodo(@RequestBody TodoTask todo) throws InvalidTODOTaskStatusException, TODOTaskMappingException {
-        return new ResponseEntity<>(todoManagementService.addTodoItem(todo), HttpStatus.ACCEPTED);
+    @PostMapping("/add")
+    ResponseEntity<String> addTodo(@Valid @RequestBody TodoAddItemRequest todoItem) throws TODOTaskMappingException, TODOPastDueException {
+        return new ResponseEntity<>(todoManagementService.addTodoItem(todoItem), HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/todos/updateDesc")
-    ResponseEntity<String> updateDesc(@RequestBody TodoTask todo) throws InvalidTODORequestException, TODODescriptionInvalidException, TODOPastDueException {
-        return new ResponseEntity<>(todoManagementService.changeDesc(todo), HttpStatus.OK);
+    @PostMapping("/updateDesc")
+    ResponseEntity<String> updateDesc(@Valid @RequestBody TodoUpdateDescRequest todoItem) throws InvalidTODORequestException, TODODescriptionInvalidException, TODOPastDueException {
+        return new ResponseEntity<>(todoManagementService.changeDesc(todoItem), HttpStatus.OK);
     }
 
-    @PostMapping("/todos/updateStatus")
-    ResponseEntity<String> updateStatus(@RequestBody TodoTask todo) throws InvalidTODOTaskStatusException, TODOPastDueException, InvalidTODORequestException {
-        return new ResponseEntity<>(todoManagementService.changeStatus(todo), HttpStatus.OK);
+    @PostMapping("/markDone")
+    ResponseEntity<String> updateDoneStatus(@RequestParam Long id) throws InvalidTODOTaskStatusException, TODOPastDueException, InvalidTODORequestException {
+        return new ResponseEntity<>(todoManagementService.changeStatus(id, TaskStatuses.DONE.getTaskStatus()), HttpStatus.OK);
+    }
+
+    @PostMapping("/markNotDone")
+    ResponseEntity<String> updateNotDoneStatus(@RequestParam Long id) throws InvalidTODOTaskStatusException, TODOPastDueException, InvalidTODORequestException {
+        return new ResponseEntity<>(todoManagementService.changeStatus(id, TaskStatuses.NOT_DONE.getTaskStatus()), HttpStatus.OK);
     }
 }
