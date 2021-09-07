@@ -12,11 +12,12 @@
  - [JDK 11](https://openjdk.java.net/projects/jdk/11/)
  - [SpringBoot 2.5](https://spring.io/blog/2021/08/19/spring-boot-2-5-4-available-now)
  - [Swagger](https://editor.swagger.io/) for API contract
- - [Mapstruct](https://mapstruct.org/) as Mapper Utility between FrontEnd and Persistence layer POJO models.
+ - [Mapstruct](https://mapstruct.org/) as Mapper Utility between FrontEnd and Persistence layer POJO models
  - [Gradle](https://docs.gradle.org/current/userguide/pmd_plugin.html) as dependency management tool
  - [PMD](https://docs.gradle.org/current/userguide/pmd_plugin.html) for code quality analysis
  - [Jacoco](https://docs.gradle.org/current/userguide/jacoco_plugin.html) for Junit Test coverage report
  - [Junit 5](https://junit.org/junit5) for unit tests
+ - [WebMvcTest](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/autoconfigure/web/servlet/WebMvcTest.html) for integration testing   
  - [Docker](https://www.docker.com/) for containerizing the application. More info in [screenshots](./screenshots).
  - [H2](https://www.h2database.com/html/main.html) as in memory database
  - [Lombok](https://projectlombok.org/) for annotation processor
