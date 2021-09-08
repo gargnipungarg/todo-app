@@ -6,4 +6,5 @@ public class AppUtils {
     public static boolean isDateDue(Date dueDate) {
         return new Date().getTime() > dueDate.getTime();
     }
+    private AppUtils() {}
 }

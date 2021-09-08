@@ -36,32 +36,32 @@ public class TODOManagementController {
 
     @Cacheable("todos")
     @GetMapping("/list")
-    ResponseEntity<List<TODOEntity>> getAllItemsOfStatus(@RequestParam Optional<Boolean> notDone) {
+    public ResponseEntity<List<TODOEntity>> getAllItemsOfStatus(@RequestParam Optional<Boolean> notDone) {
         return new ResponseEntity<>(todoManagementService.findAllByStatus(notDone), HttpStatus.OK);
     }
 
     @GetMapping
-    ResponseEntity<TODOEntity> getTaskDetails(@RequestParam Long id) throws NoTODOTaskFoundException {
+    public ResponseEntity<TODOEntity> getTaskDetails(@RequestParam Long id) throws NoTODOTaskFoundException {
         return new ResponseEntity<>(todoManagementService.findByTaskId(id), HttpStatus.OK);
     }
 
     @PostMapping("/add")
-    ResponseEntity<String> addTodo(@Valid @RequestBody TodoAddItemRequest todoItem) throws TODOTaskMappingException, TODOPastDueException {
+    public ResponseEntity<String> addTodo(@Valid @RequestBody TodoAddItemRequest todoItem) throws TODOTaskMappingException, TODOPastDueException {
         return new ResponseEntity<>(todoManagementService.addTodoItem(todoItem), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/updateDesc")
-    ResponseEntity<String> updateDesc(@Valid @RequestBody TodoUpdateDescRequest todoItem) throws InvalidTODORequestException, TODODescriptionInvalidException, TODOPastDueException {
+    public ResponseEntity<String> updateDesc(@Valid @RequestBody TodoUpdateDescRequest todoItem) throws InvalidTODORequestException, TODODescriptionInvalidException, TODOPastDueException {
         return new ResponseEntity<>(todoManagementService.changeDesc(todoItem), HttpStatus.OK);
     }
 
     @PostMapping("/markDone")
-    ResponseEntity<String> updateDoneStatus(@RequestParam Long id) throws TODOPastDueException, InvalidTODORequestException {
+    public ResponseEntity<String> updateDoneStatus(@RequestParam Long id) throws TODOPastDueException, InvalidTODORequestException {
         return new ResponseEntity<>(todoManagementService.changeStatus(id, TaskStatuses.DONE.getTaskStatus()), HttpStatus.OK);
     }
 
     @PostMapping("/markNotDone")
-    ResponseEntity<String> updateNotDoneStatus(@RequestParam Long id) throws TODOPastDueException, InvalidTODORequestException {
+    public ResponseEntity<String> updateNotDoneStatus(@RequestParam Long id) throws TODOPastDueException, InvalidTODORequestException {
         return new ResponseEntity<>(todoManagementService.changeStatus(id, TaskStatuses.NOT_DONE.getTaskStatus()), HttpStatus.OK);
     }
 }

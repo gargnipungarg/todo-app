@@ -28,7 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 @ExtendWith(MockitoExtension.class)
-public class TODOManagementServiceImplTests {
+class TODOManagementServiceImplTests {
 
     @Mock
     private TODOManagementRepository mockRepository;
@@ -77,7 +77,7 @@ public class TODOManagementServiceImplTests {
     void testChangeDesc() throws Exception {
         TodoUpdateDescRequest request = TestUtil.getTodoUpdateDescRequest();
         Mockito.when(mockRepository.getById(any())).thenReturn(TestUtil.getTestTODOEntity());
-        assertEquals(serviceUnderTest.changeDesc(request), TestConstants.TEST_ITEM_UPDATED_MSG);
+        assertEquals(TestConstants.TEST_ITEM_UPDATED_MSG, serviceUnderTest.changeDesc(request));
         Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).getById(anyLong());
         Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).save(any());
     }
@@ -108,7 +108,7 @@ public class TODOManagementServiceImplTests {
     @Test
     void testChangeNotDoneStatus() throws Exception {
         Mockito.when(mockRepository.getById(any())).thenReturn(TestUtil.getTestTODOEntity());
-        assertEquals(serviceUnderTest.changeStatus(TestConstants.ONE_LONG, TestConstants.TEST_NOT_DONE_STATUS), TestConstants.TEST_ITEM_UPDATED_MSG);
+        assertEquals(TestConstants.TEST_ITEM_UPDATED_MSG, serviceUnderTest.changeStatus(TestConstants.ONE_LONG, TestConstants.TEST_NOT_DONE_STATUS));
         Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).getById(anyLong());
     }
 
@@ -121,7 +121,7 @@ public class TODOManagementServiceImplTests {
     @Test
     void testChangeDoneStatus() throws Exception {
         Mockito.when(mockRepository.getById(any())).thenReturn(TestUtil.getTestTODOEntity());
-        assertEquals(serviceUnderTest.changeStatus(TestConstants.ONE_LONG, TestConstants.TEST_DONE_STATUS), TestConstants.TEST_ITEM_UPDATED_MSG);
+        assertEquals(TestConstants.TEST_ITEM_UPDATED_MSG, serviceUnderTest.changeStatus(TestConstants.ONE_LONG, TestConstants.TEST_DONE_STATUS));
         Mockito.verify(mockRepository, Mockito.times(TestConstants.ONE_INT)).getById(anyLong());
     }
 

@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(TODOManagementController.class)
-public class TODOManagementControllerTests {
+class TODOManagementControllerTests {
 
     @MockBean
     TODOManagementService todoManagementService;
@@ -38,7 +38,7 @@ public class TODOManagementControllerTests {
     private ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void testGetAllItemsOfStatus() throws Exception {
+    void testGetAllItemsOfStatus() throws Exception {
         Mockito.when(todoManagementService.findAllByStatus(Optional.empty()))
                 .thenReturn(Arrays.asList(TestUtil.getTestTODOEntity()));
 
@@ -49,7 +49,7 @@ public class TODOManagementControllerTests {
     }
 
     @Test
-    public void testGetTaskDetails() throws Exception {
+    void testGetTaskDetails() throws Exception {
         Mockito.when(todoManagementService.findByTaskId(TestConstants.ONE_LONG))
                 .thenReturn(TestUtil.getTestTODOEntity());
 
@@ -59,7 +59,7 @@ public class TODOManagementControllerTests {
     }
 
     @Test
-    public void testAddTodo() throws Exception {
+    void testAddTodo() throws Exception {
 
         TodoAddItemRequest testTODOItem = TestUtil.getTestTODOItem();
         Mockito.when(todoManagementService.addTodoItem(testTODOItem))
@@ -73,7 +73,7 @@ public class TODOManagementControllerTests {
     }
 
     @Test
-    public void testUpdateDesc() throws Exception {
+    void testUpdateDesc() throws Exception {
 
         TodoUpdateDescRequest testTODOItem = TestUtil.getTodoUpdateDescRequest();
         Mockito.when(todoManagementService.changeDesc(testTODOItem))
@@ -87,7 +87,7 @@ public class TODOManagementControllerTests {
     }
 
     @Test
-    public void testMarkDone() throws Exception {
+    void testMarkDone() throws Exception {
 
         Mockito.when(todoManagementService.changeStatus(TestConstants.ONE_LONG, TestConstants.TEST_DONE_STATUS))
                 .thenReturn(TestConstants.TEST_ITEM_UPDATED_MSG);
@@ -98,7 +98,7 @@ public class TODOManagementControllerTests {
     }
 
     @Test
-    public void testMarkNotDone() throws Exception {
+    void testMarkNotDone() throws Exception {
 
         Mockito.when(todoManagementService.changeStatus(TestConstants.ONE_LONG, TestConstants.TEST_NOT_DONE_STATUS))
                 .thenReturn(TestConstants.TEST_ITEM_UPDATED_MSG);
