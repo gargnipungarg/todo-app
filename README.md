@@ -11,7 +11,8 @@
 # Tech Stack
  - [JDK 11](https://openjdk.java.net/projects/jdk/11/)
  - [SpringBoot 2.5](https://spring.io/blog/2021/08/19/spring-boot-2-5-4-available-now)
- - [Swagger](https://editor.swagger.io/) for API contract
+ - [Swagger](https://editor.swagger.io/) for writing API contract
+ - [Open API 3](https://swagger.io/specification/) for contract standard  
  - [Mapstruct](https://mapstruct.org/) as Mapper Utility between FrontEnd and Persistence layer POJO models
  - [Gradle](https://docs.gradle.org/current/userguide/pmd_plugin.html) as dependency management tool
  - [PMD](https://docs.gradle.org/current/userguide/pmd_plugin.html) for code quality analysis. Report is generated at build/reports/pmd with errors if any, after building the project.
