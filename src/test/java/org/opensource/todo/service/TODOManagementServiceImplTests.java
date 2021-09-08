@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opensource.todo.exception.InvalidTODORequestException;
-import org.opensource.todo.exception.InvalidTODOTaskStatusException;
 import org.opensource.todo.exception.NoTODOTaskFoundException;
 import org.opensource.todo.exception.TODODescriptionInvalidException;
 import org.opensource.todo.exception.TODOPastDueException;
@@ -18,6 +17,8 @@ import org.opensource.todo.model.TodoUpdateDescRequest;
 import org.opensource.todo.respository.TODOManagementRepository;
 import org.opensource.todo.testConsts.TestConstants;
 import org.opensource.todo.testUtils.TestUtil;
+
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -112,6 +113,12 @@ public class TODOManagementServiceImplTests {
     }
 
     @Test
+    void testChangeStatusException() throws Exception {
+        Mockito.when(mockRepository.getById(any())).thenThrow(javax.persistence.EntityNotFoundException.class);
+        assertThrows(InvalidTODORequestException.class, () -> serviceUnderTest.changeStatus(TestConstants.ONE_LONG, TestConstants.TEST_NOT_DONE_STATUS));
+    }
+
+    @Test
     void testChangeDoneStatus() throws Exception {
         Mockito.when(mockRepository.getById(any())).thenReturn(TestUtil.getTestTODOEntity());
         assertEquals(serviceUnderTest.changeStatus(TestConstants.ONE_LONG, TestConstants.TEST_DONE_STATUS), TestConstants.TEST_ITEM_UPDATED_MSG);
@@ -132,12 +139,21 @@ public class TODOManagementServiceImplTests {
     }
 
     @Test
-    void testFindAllByStatus() throws InvalidTODOTaskStatusException {
+    void testFindAllByStatus() {
         TODOEntity item = TestUtil.getTestTODOEntity();
         Mockito.when(mockRepository.findAll()).thenReturn(Collections.singletonList(item));
         final List<TODOEntity> allByStatus = serviceUnderTest.findAllByStatus(Optional.of(Boolean.TRUE));
         assertEquals(1, allByStatus.size());
-        Mockito.verify(mockRepository, Mockito.times(TestConstants.ZERO_INT)).getById(anyLong());
+    }
+
+    @Test
+    void testFindAllByStatusAllItems(){
+        TODOEntity item = TestUtil.getTestTODOEntity();
+        TODOEntity item2 = TestUtil.getTestTODOEntity();
+        item2.setStatus(TestConstants.TEST_DONE_STATUS);
+        Mockito.when(mockRepository.findAll()).thenReturn(Arrays.asList(item, item2));
+        final List<TODOEntity> allByStatus = serviceUnderTest.findAllByStatus(Optional.of(Boolean.FALSE));
+        assertEquals(2, allByStatus.size());
     }
 
 }

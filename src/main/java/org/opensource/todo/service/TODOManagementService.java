@@ -5,7 +5,6 @@ import org.opensource.todo.exception.TODOPastDueException;
 import org.opensource.todo.exception.TODOTaskMappingException;
 import org.opensource.todo.exception.TODODescriptionInvalidException;
 import org.opensource.todo.exception.InvalidTODORequestException;
-import org.opensource.todo.exception.InvalidTODOTaskStatusException;
 import org.opensource.todo.model.TodoAddItemRequest;
 import org.opensource.todo.model.TodoUpdateDescRequest;
 import org.opensource.todo.model.TODOEntity;
@@ -17,6 +16,6 @@ public interface TODOManagementService {
     TODOEntity findByTaskId(Long taskId) throws NoTODOTaskFoundException;
     String addTodoItem(TodoAddItemRequest todo) throws TODOTaskMappingException, TODOPastDueException;
     String changeDesc(TodoUpdateDescRequest todoTask) throws TODODescriptionInvalidException, InvalidTODORequestException, TODOPastDueException;
-    String changeStatus(Long id, String status) throws InvalidTODORequestException, InvalidTODOTaskStatusException, TODOPastDueException;
+    String changeStatus(Long id, String status) throws InvalidTODORequestException, TODOPastDueException;
     List<TODOEntity> findAllByStatus(Optional<Boolean> status);
 }

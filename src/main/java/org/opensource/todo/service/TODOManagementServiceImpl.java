@@ -14,7 +14,6 @@ import org.opensource.todo.exception.TODOPastDueException;
 import org.opensource.todo.exception.TODOTaskMappingException;
 import org.opensource.todo.exception.TODODescriptionInvalidException;
 import org.opensource.todo.exception.InvalidTODORequestException;
-import org.opensource.todo.exception.InvalidTODOTaskStatusException;
 import org.opensource.todo.model.TodoAddItemRequest;
 import org.opensource.todo.model.TodoUpdateDescRequest;
 import org.opensource.todo.model.TODOEntity;
@@ -78,7 +77,7 @@ public class TODOManagementServiceImpl implements TODOManagementService{
         }
     }
 
-    public String changeStatus(Long todoId, String status) throws InvalidTODORequestException, InvalidTODOTaskStatusException, TODOPastDueException {
+    public String changeStatus(Long todoId, String status) throws InvalidTODORequestException, TODOPastDueException {
         try {
             log.info("Querying for TODO id: "+todoId);
             if(todoId == 0) {
@@ -102,8 +101,6 @@ public class TODOManagementServiceImpl implements TODOManagementService{
             log.info("Status updated, persisting item.");
             todoManagementRepository.save(item);
             return AppConstants.ITEM_UPDATED_MSG + todoId;
-        } catch (IllegalArgumentException ex) {
-            throw new InvalidTODOTaskStatusException(status);
         } catch(javax.persistence.EntityNotFoundException ex) {
             throw new InvalidTODORequestException(AppConstants.INVALID_ID_MSG);
         }

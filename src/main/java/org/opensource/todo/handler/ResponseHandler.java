@@ -6,7 +6,6 @@ import org.opensource.todo.exception.TODOPastDueException;
 import org.opensource.todo.exception.TODOTaskMappingException;
 import org.opensource.todo.exception.TODODescriptionInvalidException;
 import org.opensource.todo.exception.InvalidTODORequestException;
-import org.opensource.todo.exception.InvalidTODOTaskStatusException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,7 +31,7 @@ public class ResponseHandler {
     }
 
     @ResponseBody
-    @ExceptionHandler({InvalidTODORequestException.class, TODODescriptionInvalidException.class, InvalidTODOTaskStatusException.class})
+    @ExceptionHandler({InvalidTODORequestException.class, TODODescriptionInvalidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     String todoInvalidRequestHandler(Exception ex) {
         return ex.getMessage();

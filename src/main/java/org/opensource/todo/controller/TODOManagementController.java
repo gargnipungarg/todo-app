@@ -9,7 +9,6 @@ import org.opensource.todo.exception.TODOPastDueException;
 import org.opensource.todo.exception.TODOTaskMappingException;
 import org.opensource.todo.exception.TODODescriptionInvalidException;
 import org.opensource.todo.exception.InvalidTODORequestException;
-import org.opensource.todo.exception.InvalidTODOTaskStatusException;
 import org.opensource.todo.model.TodoAddItemRequest;
 import org.opensource.todo.model.TodoUpdateDescRequest;
 import org.opensource.todo.model.TODOEntity;
@@ -57,12 +56,12 @@ public class TODOManagementController {
     }
 
     @PostMapping("/markDone")
-    ResponseEntity<String> updateDoneStatus(@RequestParam Long id) throws InvalidTODOTaskStatusException, TODOPastDueException, InvalidTODORequestException {
+    ResponseEntity<String> updateDoneStatus(@RequestParam Long id) throws TODOPastDueException, InvalidTODORequestException {
         return new ResponseEntity<>(todoManagementService.changeStatus(id, TaskStatuses.DONE.getTaskStatus()), HttpStatus.OK);
     }
 
     @PostMapping("/markNotDone")
-    ResponseEntity<String> updateNotDoneStatus(@RequestParam Long id) throws InvalidTODOTaskStatusException, TODOPastDueException, InvalidTODORequestException {
+    ResponseEntity<String> updateNotDoneStatus(@RequestParam Long id) throws TODOPastDueException, InvalidTODORequestException {
         return new ResponseEntity<>(todoManagementService.changeStatus(id, TaskStatuses.NOT_DONE.getTaskStatus()), HttpStatus.OK);
     }
 }
