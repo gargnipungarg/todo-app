@@ -29,10 +29,16 @@ public class TODOManagementServiceImpl implements TODOManagementService{
 
     private final TODOManagementRepository todoManagementRepository;
 
+    /*
+    This method returns a task item on the basis of id provided in the request
+     */
     public TODOEntity findByTaskId(Long taskId) throws NoTODOTaskFoundException {
         return todoManagementRepository.findById(taskId).orElseThrow(() -> new NoTODOTaskFoundException(String.valueOf(taskId)));
     }
 
+    /*
+    This method adds a task item. Description and due date is expected from request, rest parameters service will fill.
+     */
     public String addTodoItem(TodoAddItemRequest todo) throws TODOTaskMappingException, TODOPastDueException {
         try {
             if(AppUtils.isDateDue(todo.getDueDate())) {
@@ -52,6 +58,9 @@ public class TODOManagementServiceImpl implements TODOManagementService{
         }
     }
 
+    /*
+    This method updates the description of a task item. New Description and Task ID is expected from request, rest parameters service will fill.
+     */
     public String changeDesc(TodoUpdateDescRequest todoTask) throws TODODescriptionInvalidException, InvalidTODORequestException, TODOPastDueException {
         try {
             log.info("Todo task: "+todoTask);
@@ -77,6 +86,9 @@ public class TODOManagementServiceImpl implements TODOManagementService{
         }
     }
 
+    /*
+    This method updates the status of a task item. You can move the status from Done - Not Done & NOt Done - Done, completion date will be changed as per required.
+     */
     public String changeStatus(Long todoId, String status) throws InvalidTODORequestException, TODOPastDueException {
         try {
             log.info("Querying for TODO id: "+todoId);
@@ -106,6 +118,9 @@ public class TODOManagementServiceImpl implements TODOManagementService{
         }
     }
 
+    /*
+    This method returns all task items with not done status. If no filter is provided, method will return all items in DB. The incoming flag param determine whether to return only Not DOne items or all.
+     */
     public List<TODOEntity> findAllByStatus(Optional<Boolean> status) {
         List<TODOEntity> allItems = todoManagementRepository.findAll();
         if(status.isPresent() && status.get().equals(Boolean.TRUE)) {
