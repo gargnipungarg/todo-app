@@ -125,7 +125,14 @@ public class TODOManagementServiceImpl implements TODOManagementService{
         List<TODOEntity> allItems = todoManagementRepository.findAll();
         if(status.isPresent() && status.get().equals(Boolean.TRUE)) {
             log.info("Filtering TODO items on criteria of not done status");
-            return allItems.stream().filter(item -> StringUtils.equals(item.getStatus(), TaskStatuses.NOT_DONE.getTaskStatus())).collect(Collectors.toList());
+            List<TODOEntity> items = allItems.stream().filter(item -> StringUtils.equals(item.getStatus(), TaskStatuses.NOT_DONE.getTaskStatus())).collect(Collectors.toList());
+            items.forEach(item -> {
+                if(!item.getStatus().equals(TaskStatuses.PAST_DUE.getTaskStatus()) && AppUtils.isDateDue(item.getDueDate())) {
+                    item.setStatus(TaskStatuses.PAST_DUE.getTaskStatus());
+                    todoManagementRepository.save(item);
+                }
+            });
+            return items;
         }
         return allItems;
     }
