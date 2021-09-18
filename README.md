@@ -31,7 +31,7 @@
  - To run project on Linux/MacOS, use [run.sh](./run.sh), for windows - use [run.bat](./run.bat)
  - [docker-commands.txt](docker-commands.txt) shows all docker related operations
  - Postman collection for hitting endpoints with request body - [TODO.postman_collection.json](TODO.postman_collection.json)
- - Automated tests are part of build process. Passing test is mandatory step for successful build. Sample test report - [Report](./test-report.PNG)
+ - Automated tests are part of build process. Passing test is mandatory step for successful build.
 
 # API Contract 
 
