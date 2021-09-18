@@ -13,7 +13,6 @@ import org.opensource.todo.model.TodoAddItemRequest;
 import org.opensource.todo.model.TodoUpdateDescRequest;
 import org.opensource.todo.model.TODOEntity;
 import org.opensource.todo.service.TODOManagementService;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +33,6 @@ public class TODOManagementController {
 
     private final TODOManagementService todoManagementService;
 
-    @Cacheable("todos")
     @GetMapping("/list")
     public ResponseEntity<List<TODOEntity>> getAllItemsOfStatus(@RequestParam Optional<Boolean> notDone) {
         return new ResponseEntity<>(todoManagementService.findAllByStatus(notDone), HttpStatus.OK);
